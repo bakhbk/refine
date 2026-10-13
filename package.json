@@ -1,0 +1,48 @@
+{
+  "name": "pi-refine",
+  "version": "1.0.2",
+  "description": "Refine chaotic ideas into structured prompts",
+  "type": "module",
+  "license": "MIT",
+  "author": "bakhbk",
+  "homepage": "https://github.com/bakhbk/refine",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bakhbk/refine.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bakhbk/refine/issues"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "keywords": [
+    "pi-package",
+    "pi",
+    "prompt",
+    "extension"
+  ],
+  "scripts": {
+    "test": "node --experimental-strip-types --import ./tests/ts-register.mjs --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "pi": {
+    "extensions": [
+      "./src/index.ts"
+    ]
+  },
+  "files": [
+    "src/"
+  ],
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-tui": "*"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "^0.86.0",
+    "@earendil-works/pi-ai": "^0.86.0",
+    "@earendil-works/pi-tui": "^0.86.0",
+    "typescript": "^5.6.0"
+  }
+}
