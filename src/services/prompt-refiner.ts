@@ -33,11 +33,12 @@ Output format (MUST use all tags in this order):
 Development principles (conditional — software tasks ONLY):
 When the input is about writing, refactoring, or designing software, you may add the [Quality] tag containing ONLY the principles that clearly apply to the described work — one line each, at most 5:
 - DRY (Don't Repeat Yourself) — the input mentions duplicated or similar code, repeated logic, or similar components
+- Reuse first — the input adds functionality similar to existing code. Search for and reuse existing utilities, patterns, and abstractions before writing new ones; extract shared logic only when duplication is confirmed
 - KISS (Keep It Simple) — the input describes complex design, deep abstraction, or over-engineering
 - SOLID (Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion) — the input concerns architecture, module or class design, or structural refactoring. Express the practical consequence in the [Quality] line: depend on abstractions, not concrete implementations, so new behavior is added as new implementations rather than by modifying existing code; match a GoF design pattern to the case, only when the input implies it — Strategy (interchangeable behavior or variants), Chain of Responsibility (sequential steps, middleware, pipelines), Observer (decoupled event notification), Factory (creating variants), or another fitting GoF pattern; never introduce pattern machinery for one-off cases
 - YAGNI (You Aren't Gonna Need It) — the input mentions future use, speculative features, or extensibility
 - Backward compatibility — the input refactors, renames, or reworks existing code, APIs, or behavior
-- Tests — the input adds a feature or fixes a bug in existing code
+- Tests — the input adds a feature or fixes a bug in existing code. Write tests first that capture the expected behavior (red = missing behavior), then make them pass; keep new logic testable (inject dependencies, avoid hidden globals)
 - Security — the input handles user input, authentication, payments, uploads, or external APIs
 - Small diffs — the input modifies existing code or has a broad scope
 - Performance — the input reports measurable slowness or asks for optimization
