@@ -1,5 +1,5 @@
 /**
- * PromptRefiner: one-shot prompt polishing + post-processing edge cases.
+ * PromptRefiner: one-shot prompt polishing + output post-processing edge cases.
  */
 
 import { describe, it } from "node:test";
@@ -18,31 +18,30 @@ function makeRefiner(response: string) {
 describe("PromptRefiner", () => {
 	it("passes the raw input and a rewriter system prompt", async () => {
 		const { refiner, calls } = makeRefiner("[Role] x");
-		await refiner.refineSimple("сделай сайт");
-		assert.strictEqual(calls[0].prompt, "сделай сайт");
+		await refiner.refineSimple("make a website");
+		assert.strictEqual(calls[0].prompt, "make a website");
 		assert.match(calls[0].system ?? "", /PROMPT REWRITER/);
 	});
 
-	it("characterization: only triple-quoted fences are stripped, backtick fences pass through", async () => {
-		const { refiner } = makeRefiner("```text\n[Role] expert\n[Task] do it\n```");
-		// Characterization: the cleaner only removes """-fences, backtick fences pass through.
-		assert.strictEqual(await refiner.refineSimple("идея"), "```text\n[Role] expert\n[Task] do it\n```");
-		const quoted = makeRefiner("\"\"\"text\n[Role] expert\n[Task] do it\n\"\"\"");
-		assert.strictEqual(await quoted.refiner.refineSimple("идея"), "[Role] expert\n[Task] do it");
+	it("strips triple-quoted fences", async () => {
+		const { refiner } = makeRefiner("\"\"\"text\n[Role] expert\n[Task] do it\n\"\"\"");
+		assert.strictEqual(await refiner.refineSimple("idea"), "[Role] expert\n[Task] do it");
 	});
 
-	it("strips an English preamble line", async () => {
+	it("drops preamble lines before the first tag line, in any language", async () => {
 		const { refiner } = makeRefiner("Sure, here is the prompt:\n[Task] x");
 		assert.strictEqual(await refiner.refineSimple("idea"), "[Task] x");
+		const russian = makeRefiner("\u041a\u043e\u043d\u0435\u0447\u043d\u043e, \u0432\u043e\u0442 \u043f\u0440\u043e\u043c\u043f\u0442:\n[Task] x");
+		assert.strictEqual(await russian.refiner.refineSimple("idea"), "[Task] x");
 	});
 
-	it("strips a Russian preamble line (unicode \\b via the u flag)", async () => {
-		const { refiner } = makeRefiner("Конечно, вот промпт:\n[Task] x");
-		assert.strictEqual(await refiner.refineSimple("идея"), "[Task] x");
+	it("keeps unstructured output untouched when no tags are present", async () => {
+		const { refiner } = makeRefiner("Step 1: do the thing");
+		assert.strictEqual(await refiner.refineSimple("idea"), "Step 1: do the thing");
 	});
 
 	it("keeps the [Filename] tag (stripping happens in the flow, not here)", async () => {
 		const { refiner } = makeRefiner("[Task] x\n[Filename: my_task.md]");
-		assert.match(await refiner.refineSimple("идея"), /\[Filename: my_task\.md\]/);
+		assert.match(await refiner.refineSimple("idea"), /\[Filename: my_task\.md\]/);
 	});
 });
