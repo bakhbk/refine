@@ -1,6 +1,4 @@
-/**
- * Prompt refinement: one-shot prompt polishing.
- */
+import { cleanOutput } from "./output-clean.js";
 
 const SYSTEM_PROMPT_SIMPLE = `LANGUAGE RULE (MOST IMPORTANT): You MUST reply in the exact same language as the user's input. If the user writes in Russian, your entire output is in Russian. If English → English. NEVER translate. NEVER default to English.
 
@@ -80,30 +78,6 @@ export class PromptRefiner {
 
 	async refineSimple(rawInput: string, options?: CallModelOptions): Promise<string> {
 		const response = await this.callModel(rawInput, { ...options, system: SYSTEM_PROMPT_SIMPLE });
-		return this.cleanMarkdownBlock(response);
-	}
-
-	private cleanMarkdownBlock(text: string): string {
-		let cleaned = text
-			.replace(/^"""[a-zA-Z]*\n/gm, "")
-			.replace(/"""$/gm, "")
-			.trim();
-
-		// Cut common preamble lines (bilingual — output language mirrors the user's input).
-		// Post-processing regex, not model-visible: keep both languages.
-		const lines = cleaned.split("\n");
-		let firstRealLine = 0;
-		// `u` makes \b Unicode-aware: without it, no boundary exists after a Cyrillic letter and the Russian alternates never match.
-	// JS \b is ASCII-only (the u flag does not extend \w), so use an explicit unicode
-	// word boundary: without it, no boundary exists after a Cyrillic letter and the Russian alternates never match.
-	const preambleRe = /^(Конечно|Вот|Ниже|Итак|Данный|Для этой задачи|Хорошо|Отлично|Разумеется|Sure|Certainly|Of course|Here|Below|Okay|Alright)(?!\p{L}|\p{N}|_)/iu;
-		while (firstRealLine < lines.length && preambleRe.test(lines[firstRealLine].trim())) {
-			firstRealLine++;
-		}
-		if (firstRealLine > 0 && firstRealLine < lines.length) {
-			cleaned = lines.slice(firstRealLine).join("\n").trim();
-		}
-
-		return cleaned;
+		return cleanOutput(response);
 	}
 }

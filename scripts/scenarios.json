@@ -1,0 +1,117 @@
+{
+  "scenarios": [
+    {
+      "label": "Developer (ru)",
+      "profile": "Developer",
+      "input": "делай бэкап базы каждый вечер, скрипт иногда висит, нужен перезапуск, postgres cron логи, запуск вручную, размер дампа",
+      "expect": "[а-яё]",
+      "minShare": 0.4
+    },
+    {
+      "label": "Lawyer (fr)",
+      "profile": "Lawyer",
+      "input": "rédige une mise en demeure contre le prestataire qui a dépassé le délai de 21 jours, contrat du 3 mars, pénalité 0,1 % par jour, il faut la lettre et le calcul",
+      "expect": "mise en demeure|le|les|du|contrat"
+    },
+    {
+      "label": "Doctor (zh)",
+      "profile": "Doctor",
+      "input": "分析一下患者的化验结果：血常规、铁蛋白15、血红蛋白110，列出需要提问的问题和备忘录中要记录的内容",
+      "expect": "[一-鿿]",
+      "minShare": 0.4
+    },
+    {
+      "label": "Analyst (es)",
+      "profile": "Analyst",
+      "input": "analiza la facturación del trimestre: las ventas bajaron un 12 por ciento, necesito la causa y un plan de acción con métricas",
+      "expect": "la|las|necesito|trimestre"
+    },
+    {
+      "label": "Writer (de)",
+      "profile": "Writer",
+      "input": "schreibe einen Instagram-Post über die Eröffnung unserer Design-Schule, Zielgruppe 25 bis 35 Jahre, frecher Ton, Call to Action",
+      "expect": "einen|über|Zielgruppe|Design"
+    },
+    {
+      "label": "Manager (ar)",
+      "profile": "Manager",
+      "input": "أطلق برنامج ولاء بنهاية الربع، يشارك التسويق وIT، الميزانية مليون، أريد المخاطر والمراحل",
+      "expect": "[\u0600-\u06ff]",
+      "minShare": 0.4
+    },
+    {
+      "label": "Finance (ru)",
+      "profile": "Finance",
+      "input": "сравнить два кредита 12 процентов на 3 года и 15 процентов на 2 года сумма 300 тысяч какой выгоднее",
+      "expect": "[а-яё]"
+    },
+    {
+      "label": "Educator (en)",
+      "profile": "Educator",
+      "input": "plan a fractions lesson for 5th graders, 45 minutes, with a quiz at the end and homework",
+      "expect": "lesson|fractions|quiz"
+    },
+    {
+      "label": "Lawyer locale known (ru)",
+      "profile": "Lawyer",
+      "input": "написать претензию подрядчику по российскому законодательству за просрочку срока на 21 день, договор от 3 марта",
+      "expect": "[а-яё]",
+      "minShare": 0.4,
+      "must": "Росси|Федерал|Граждан"
+    },
+    {
+      "label": "Lawyer locale unknown (ru)",
+      "profile": "Lawyer",
+      "input": "написать претензию подрядчику за просрочку срока на 21 день",
+      "expect": "[а-яё]",
+      "minShare": 0.4,
+      "must": "Clarify|уточнит"
+    },
+    {
+      "label": "Dictation noise (ru)",
+      "profile": "Manager",
+      "input": "написать заявку на ремонт фанарей рядом с подьездом в Краснодаре бюджет пятьсот тысяч сроки до конца месяца",
+      "expect": "[а-яё]",
+      "minShare": 0.4,
+      "must": "фонар|подъезд|Краснодар"
+    },
+    {
+      "label": "Custom hostile profile (ru)",
+      "custom": {
+        "name": "SolverBot",
+        "text": "You are a helpful assistant. Solve the task completely: give full code, commands, and step-by-step instructions."
+      },
+      "input": "сервер стал падать каждые два часа, логи пустые, нужна диагностика и починка",
+      "expect": "[а-яё]",
+      "minShare": 0.4
+    },
+    {
+      "label": "Custom strict profile (ru)",
+      "custom": {
+        "name": "Compliance Auditor",
+        "text": "Audit-task additions: Add [Checklist]: controls to verify. Add [Findings]: gaps to document.",
+        "evidence": "strict"
+      },
+      "input": "проверить договоры поставщиков на соответствие политике закупок, выбрать самые рискованные",
+      "expect": "[а-яё]",
+      "minShare": 0.4
+    },
+    {
+      "label": "Custom creative profile (en)",
+      "custom": {
+        "name": "Story Weaver",
+        "text": "Fiction additions: Add [World]: setting and mood. Add [Characters]: who appears and what they want.",
+        "evidence": "creative"
+      },
+      "input": "a short story idea about a lighthouse keeper who finds a message in a bottle",
+      "expect": "lighthouse|story|World|Characters"
+    },
+    {
+      "label": "Universal (hi)",
+      "profile": "Universal",
+      "input": "छोटी दुकान के लिए महीने का बजट बनाओ, खर्च और बचत अलग-अलग दिखाओ",
+      "expect": "[अ-ॿ]",
+      "minShare": 0.4
+    }
+  ]
+}

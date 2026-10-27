@@ -20,16 +20,16 @@ function makeTranslator(response: string) {
 describe("Translator", () => {
 	it("passes the raw input and a translation system prompt", async () => {
 		const { translator, calls } = makeTranslator("  hello world  ");
-		const out = await translator.translate("привет мир");
+		const out = await translator.translate("\u043f\u0440\u0438\u0432\u0435\u0442 \u043c\u0438\u0440");
 		assert.strictEqual(out, "hello world"); // trimmed
-		assert.strictEqual(calls[0].prompt, "привет мир");
+		assert.strictEqual(calls[0].prompt, "\u043f\u0440\u0438\u0432\u0435\u0442 \u043c\u0438\u0440");
 		assert.match(calls[0].system ?? "", /TRANSLATOR/);
 	});
 
 	it("forwards the abort signal", async () => {
 		const { translator } = makeTranslator("x");
 		const controller = new AbortController();
-		await translator.translate("тест", { signal: controller.signal });
+		await translator.translate("test input", { signal: controller.signal });
 		// signal was forwarded to the model call (no throw since not aborted)
 	});
 
@@ -37,6 +37,6 @@ describe("Translator", () => {
 		const translator = new Translator(async () => {
 			throw new Error("Cancelled");
 		});
-		await assert.rejects(translator.translate("тест"), /Cancelled/);
+		await assert.rejects(translator.translate("test input"), /Cancelled/);
 	});
 });
