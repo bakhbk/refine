@@ -18,6 +18,7 @@ interface Scenario {
 	input: string;
 	expect: string;
 	minShare?: number;
+	must?: string;
 }
 
 function scriptShare(text: string, expect: string): number {
@@ -82,9 +83,10 @@ async function runScenario(scenario: Scenario): Promise<boolean> {
 	const sameLanguage = scenario.minShare
 		? scriptShare(out, scenario.expect) >= scenario.minShare
 		: new RegExp(scenario.expect, "i").test(out);
-	console.log(`\n=== ${scenario.label} === (${Date.now() - started}ms, calls: ${calls}, structured: ${structured}, language: ${sameLanguage})`);
+	const content = !scenario.must || new RegExp(scenario.must, "i").test(out);
+	console.log(`\n=== ${scenario.label} === (${Date.now() - started}ms, calls: ${calls}, structured: ${structured}, language: ${sameLanguage}, content: ${content})`);
 	console.log(out.slice(0, 700));
-	return structured && sameLanguage;
+	return structured && sameLanguage && content;
 }
 
 async function main() {

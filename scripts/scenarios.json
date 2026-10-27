@@ -52,6 +52,30 @@
       "expect": "lesson|fractions|quiz"
     },
     {
+      "label": "Lawyer locale known (ru)",
+      "profile": "Lawyer",
+      "input": "написать претензию подрядчику по российскому законодательству за просрочку срока на 21 день, договор от 3 марта",
+      "expect": "[а-яё]",
+      "minShare": 0.4,
+      "must": "Росси|Федерал|Граждан"
+    },
+    {
+      "label": "Lawyer locale unknown (ru)",
+      "profile": "Lawyer",
+      "input": "написать претензию подрядчику за просрочку срока на 21 день",
+      "expect": "[а-яё]",
+      "minShare": 0.4,
+      "must": "Clarify|уточнит"
+    },
+    {
+      "label": "Dictation noise (ru)",
+      "profile": "Manager",
+      "input": "написать заявку на ремонт фанарей рядом с подьездом в Краснодаре бюджет пятьсот тысяч сроки до конца месяца",
+      "expect": "[а-яё]",
+      "minShare": 0.4,
+      "must": "фонар|подъезд|Краснодар"
+    },
+    {
       "label": "Custom hostile profile (ru)",
       "custom": {
         "name": "SolverBot",
