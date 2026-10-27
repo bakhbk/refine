@@ -35,6 +35,11 @@ describe("PromptRefiner", () => {
 		assert.strictEqual(await russian.refiner.refineSimple("idea"), "[Task] x");
 	});
 
+	it("cuts trailing junk after the [Filename] line", async () => {
+		const { refiner } = makeRefiner("[Task] x\n[Filename: t.md]\nThe user's last message is about streetlights. The earlier messages... some reasoning noise");
+		assert.strictEqual(await refiner.refineSimple("idea"), "[Task] x\n[Filename: t.md]");
+	});
+
 	it("keeps unstructured output untouched when no tags are present", async () => {
 		const { refiner } = makeRefiner("Step 1: do the thing");
 		assert.strictEqual(await refiner.refineSimple("idea"), "Step 1: do the thing");

@@ -19,11 +19,15 @@ const NON_LATIN_SCRIPTS: [string, RegExp][] = [
 export const EVIDENCE_CONTRACTS: Record<string, string> = {
 	strict: [
 		"Evidence contract (strict): every factual claim must come from",
-		"the user's input or be quoted verbatim from a named real source",
-		"(law, article, study, dataset) with document title, article or",
-		"clause number, and date. Unverifiable items are listed as missing",
-		"data, never invented. Add an [Evidence] tag to the prompt listing",
-		"the exact documents or sources the executing agent must quote.",
+		"the user's input or from real, current sources relevant to the",
+		"user's locale. The executing agent must find those sources in",
+		"the user's own jurisdiction (country, then city or region) and",
+		"quote them verbatim with name, article or clause number, and",
+		"date. Infer the locale from context: language, place names,",
+		"named institutions. Never substitute another country's rules.",
+		"If the locale is not clear, add a [Clarify] tag with the exact",
+		"questions the agent must ask the user before proceeding.",
+		"Missing data is never invented.",
 	].join(" "),
 	computed: [
 		"Evidence contract (computed): numbers are never computed in the head.",

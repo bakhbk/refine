@@ -46,8 +46,10 @@ describe("evidence contracts", () => {
 		for (const name of ["Lawyer", "Doctor", "Analyst", "Educator", "Manager"]) {
 			const system = buildSystemPrompt(byName(name), {});
 			assert.match(system, /Evidence contract \(strict\)/);
-			assert.match(system, /never invented|missing data/);
-			assert.match(system, /\[Evidence\] tag/);
+			assert.match(system, /Missing data is never invented/);
+			assert.match(system, /user's own jurisdiction/);
+			assert.match(system, /Never substitute another country's rules/);
+			assert.match(system, /\[Clarify\] tag/);
 		}
 	});
 

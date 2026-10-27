@@ -29,6 +29,9 @@ export const META_GUARD = [
 	"- No preamble, no postscript, no code fences, no emoji,",
 	"  no markdown headings.",
 	"",
+	"The input may come from voice dictation: normalize obvious",
+	"transcription typos; genuinely missing facts become questions,",
+	"not guesses.",
 	"Self-check: if your text contains a solution, code, or a direct",
 	"answer to the user's question, you failed. Rewrite it as a prompt.",
 ].join("\n");
