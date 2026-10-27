@@ -5,6 +5,9 @@
 
 import { describe, it } from "node:test";
 import assert from "node:assert";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { createAssistantMessageEventStream } from "@earendil-works/pi-ai";
@@ -15,6 +18,8 @@ initTheme();
 import { runPromptFlow, type PromptFlowOptions } from "../src/commands/shared.js";
 import { registerRefineCommand } from "../src/commands/refine.js";
 import { registerTranslateCommand } from "../src/commands/translate.js";
+import { registerCraftCommand } from "../src/commands/craft.js";
+import { ProfileStore } from "../src/services/profiles.js";
 import type { Runtime } from "../src/runtime.js";
 
 /** Scriptable fake UI: canned editor/select responses, recorded calls. */
@@ -158,6 +163,47 @@ describe("command registration", () => {
 		assert.ok(commands.has("tr"));
 		assert.match(commands.get("rf").description, /Refine/i);
 		assert.match(commands.get("tr").description, /Translate/i);
+	});
+
+	it("registers /pc with a profile picker before the shared flow", async () => {
+		const { pi, commands } = makePi();
+		process.env.PI_REFINE_CONFIG = path.join(os.tmpdir(), `no-config-${Date.now()}.json`);
+		registerCraftCommand(pi, {} as Runtime, { list: () => [] } as any);
+		const ui = makeUi({ selects: [undefined] });
+		await commands.get("pc").handler("", makeCtx(ui, true));
+		assert.strictEqual(ui.selectCalls[0].title, "Refine with which profile?");
+		assert.ok(ui.selectCalls[0].options.some((o: string) => o.includes("Doctor")));
+		assert.ok(ui.selectCalls[0].options.some((o: string) => o.includes("Create a custom profile")));
+		assert.strictEqual(ui.editorCalls.length, 0);
+	});
+
+	it("creating a custom profile saves it and runs the crafted flow with it", async () => {
+		process.env.PI_REFINE_CONFIG = path.join(os.tmpdir(), `no-config-${Date.now()}.json`);
+		const { pi, commands } = makePi();
+		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "profiles-"));
+		const store = new ProfileStore(dir);
+		registerCraftCommand(pi, { resolveModel: async (a: any) => ({ ok: true, model: a.model, apiKey: "k" }) } as Runtime, store);
+		const systems: string[] = [];
+		const streamSimple = (_model: any, context: any) => {
+			systems.push(context.systemPrompt ?? "");
+			const stream = createAssistantMessageEventStream() as any;
+			stream.push({ type: "done", reason: "stop", message: { stopReason: "stop", content: [{ type: "text", text: "[Task] refined\n[Filename: x.md]" }] } } as any);
+			stream.end();
+			return stream;
+		};
+		const ui = makeUi({
+			selects: ["➕ Create a custom profile", "❌ Close"],
+			editors: ["Story Weaver", "Add [World] tag", "chaotic idea", "refined result"],
+		});
+		const ctx = makeCtx(ui, true) as any;
+		ctx.modelRegistry = { streamSimple };
+		await commands.get("pc").handler("", ctx);
+		const saved = store.list();
+		assert.strictEqual(saved.length, 1);
+		assert.strictEqual(saved[0].name, "Story Weaver");
+		assert.ok(systems[0].includes('PROFILE "Story Weaver"'));
+		assert.ok(systems[0].includes("Add [World] tag"));
+		fs.rmSync(dir, { recursive: true, force: true });
 	});
 
 	it("each command handler runs the shared flow end to end", async () => {
